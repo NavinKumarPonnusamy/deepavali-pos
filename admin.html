@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin · Booth POS</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <strong>Booth POS · Admin</strong>
+    <span class="topbar-right">
+      <span id="who" class="muted"></span>
+      <a href="cashier.html" class="btn ghost small">Cashier</a>
+      <button id="logoutBtn" class="btn ghost small" type="button">Sign out</button>
+    </span>
+  </header>
+
+  <div id="login"></div>
+
+  <main id="app" class="admin" hidden>
+
+    <!-- Shown to signed-in people who are not admins -->
+    <section id="noAccess" class="panel" hidden>
+      <h2>No admin access</h2>
+      <p>This account can't change the menu. Ask Navin to add you as an admin.</p>
+      <p class="muted">Your user ID (Navin needs this): <code id="myUid"></code></p>
+    </section>
+
+    <section id="editor" hidden>
+      <div class="panel">
+        <h2>Booth settings</h2>
+        <label class="check">
+          <input type="checkbox" id="floorMode">
+          Floor manager on duty (the Collected button moves from the cashier to the floor screen)
+        </label>
+      </div>
+
+      <div id="conflict" class="panel note" hidden>
+        Someone else changed the menu while you were editing. Saving will replace their changes.
+        <button id="discardBtn2" class="btn small" type="button">Load their version</button>
+      </div>
+
+      <div class="admin-head">
+        <h2>Menu items</h2>
+        <button id="addItemBtn" class="btn" type="button">+ Add item</button>
+      </div>
+      <div id="items" class="item-list"></div>
+
+      <div class="save-bar">
+        <span id="saveState" class="muted">No changes</span>
+        <button id="discardBtn" class="btn ghost" type="button" disabled>Discard changes</button>
+        <button id="saveBtn" class="btn primary" type="button" disabled>Save menu</button>
+      </div>
+    </section>
+
+  </main>
+
+  <script type="module" src="js/admin.js"></script>
+</body>
+</html>
