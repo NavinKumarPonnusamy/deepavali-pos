@@ -17,9 +17,11 @@
   --accent-ink: #0e0e0e;  /* text on gold buttons */
   --accent-soft: #2b2512; /* dark gold: menu buttons, notes */
   --magenta: #e3c35a;     /* light gold: highlights and focus rings */
-  --ok: #c9a227;          /* full stock bar = gold */
-  --warn: #8c7020;        /* half-empty stock bar = dark gold */
-  --danger: #e5484d;      /* kept red on purpose: sold out, errors, cash short */
+  /* Indicators stay colourful so they read at a glance */
+  --ok: #3fb950;          /* green: plenty of stock, saved messages */
+  --warn: #f0a020;        /* amber: getting low */
+  --danger: #e5484d;      /* red: sold out, errors, cash short */
+  --gold-dim: #8c7020;    /* dark gold: menu button borders */
   --radius: 10px;
   --font: "Hind", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
@@ -116,7 +118,7 @@ input, select, textarea {
 }
 .menu-name { font-weight: 700; font-size: 1.1rem; color: var(--accent); }
 .size-row { display: flex; gap: 8px; }
-.btn.size { flex: 1; padding: 14px 8px; background: var(--accent-soft); border-color: var(--warn); color: var(--ink); }
+.btn.size { flex: 1; padding: 14px 8px; background: var(--accent-soft); border-color: var(--gold-dim); color: var(--ink); }
 .btn.size:hover:not(:disabled) { background: var(--accent); color: var(--accent-ink); }
 .btn.size:active { transform: scale(0.97); }
 .tag { font-size: 0.75rem; font-weight: 500; color: var(--magenta); }

@@ -9,7 +9,8 @@
 .stock-fill.warn { background: var(--warn); }
 .stock-fill.low { background: var(--danger); }
 .stock-text { font-size: 0.8rem; color: var(--muted); }
-.stock-text.ok { color: var(--accent); }
+.stock-text.ok { color: var(--ok); }
+.stock-text.warn { color: var(--warn); }
 .stock-text.low { color: var(--danger); font-weight: 600; }
 .menu-item.sold-out { opacity: 0.6; }
 .sold-tag { font-size: 0.75rem; font-weight: 700; color: #0e0e0e; background: var(--danger);
