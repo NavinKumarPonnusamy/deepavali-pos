@@ -56,6 +56,7 @@ export function buildDay(state, day) {
     ["− Stock used (from recipes)", -p.stockUsed],
     ["− Salary", -p.salary],
     ["− Booth fee", -p.boothFee],
+    ["− Other costs (see below)", -p.otherCosts],
     ["= Profit", p.profit],
     [],
     ["CASH CHECK", "RM"],
@@ -70,6 +71,9 @@ export function buildDay(state, day) {
     ["STOCK", "RM"],
     ["Bought today", r2(purchases.reduce((s, x) => s + x.price, 0))],
     ["Unaccounted at closing count", missingRM],
+    [],
+    ["OTHER COSTS", "RM"],
+    ...((closing?.extras || []).length ? closing.extras.map((x) => [x.what, x.amount]) : [["None entered"]]),
     [],
     ["Note", closing?.note || ""],
   ], [38, 16, 12, 12]), "Summary");
@@ -144,20 +148,20 @@ export function downloadWeek(state) {
   if (!X) return alertMissing();
   const days = allDays(state, todayKey()).filter((d) => state.orders.some((o) => o.day === d) || state.days[d]).reverse();
   const rows = [["Date", "Orders", "Sales", "Booth sales", "Murukku (to friend)", "Cash", "QR", "Free orders",
-    "Voids", "Stock used", "Salary", "Booth fee", "Profit", "Cash difference", "Closed"]];
-  const tot = Array(13).fill(0);
+    "Voids", "Stock used", "Salary", "Booth fee", "Other costs", "Profit", "Cash difference", "Closed"]];
+  const tot = Array(14).fill(0);
   for (const d of days) {
     const ds = daySales(state, d), c = state.days[d];
     const sal = salary(ds, c, state.settings), p = profit(ds, sal, state.settings, c), cash = cashCheck(ds, c);
     const row = [ds.orders, ds.sales, ds.boothSales, ds.friendSales, ds.cash, ds.qr, ds.freeCount,
-      ds.voidCount, ds.stockUsed, sal.total, p.boothFee, p.profit, cash ? cash.diff : 0];
+      ds.voidCount, ds.stockUsed, sal.total, p.boothFee, p.otherCosts, p.profit, cash ? cash.diff : 0];
     row.forEach((v, i) => { tot[i] = r2(tot[i] + v); });
     rows.push([d, ...row, c ? "yes" : "NO"]);
   }
   rows.push(["Total", ...tot, ""]);
 
   const wb = X.utils.book_new();
-  X.utils.book_append_sheet(wb, sheet(rows, [12, 8, 10, 12, 18, 10, 10, 11, 7, 11, 10, 10, 10, 15, 8]), "Week");
+  X.utils.book_append_sheet(wb, sheet(rows, [12, 8, 10, 12, 18, 10, 10, 11, 7, 11, 10, 10, 12, 10, 15, 8]), "Week");
   const all = state.orders.filter((o) => days.includes(o.day));
   X.utils.book_append_sheet(wb, sheet([
     ["Date", "No", "Time", "Customer", "Items", "Payment", "Menu value (RM)", "Paid (RM)", "Status", "Void reason", "Taken by"],

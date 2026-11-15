@@ -60,3 +60,8 @@
 .panel-inner { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; }
 details.panel summary { cursor: pointer; }
 .settings-form { margin-top: 14px; }
+
+/* Other costs rows (Closing tab) */
+.extras-list { display: grid; gap: 8px; margin-bottom: 10px; }
+.extra-row { display: grid; grid-template-columns: minmax(0, 1fr) 120px auto; gap: 8px; align-items: center; }
+.extra-row input { width: 100%; min-width: 0; }

@@ -110,15 +110,21 @@ export function cashCheck(ds, closing) {
 export const boothFeeFor = (day, settings) =>
   day === settings.eventDay ? settings.eventBoothFee : settings.boothFee;
 
+// Other costs entered at closing: [{ what: "Ice (3 bags)", amount: 7.5 }, ...]
+export const otherCostsOf = (closing) =>
+  round2(sum((closing?.extras || []), (x) => Number(x.amount) || 0));
+
 export function profit(ds, sal, settings, closing) {
   const boothFee = closing?.boothFee ?? boothFeeFor(ds.day, settings);
+  const otherCosts = otherCostsOf(closing);
   return {
     sales: ds.sales,
     friendSales: ds.friendSales,
     stockUsed: ds.stockUsed,
     salary: sal.total,
     boothFee,
-    profit: round2(ds.sales - ds.friendSales - ds.stockUsed - sal.total - boothFee),
+    otherCosts,
+    profit: round2(ds.sales - ds.friendSales - ds.stockUsed - sal.total - boothFee - otherCosts),
   };
 }
 

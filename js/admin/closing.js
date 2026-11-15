@@ -15,6 +15,7 @@ import { dayLabel } from "./sales.js";
 const $ = (id) => document.getElementById(id);
 const sortedInv = () => Object.entries(state.inv).sort((a, b) => a[1].name.localeCompare(b[1].name));
 let loadedDay = null;      // which day's saved closing is currently in the form
+let extras = [];           // other costs being edited: [{ what, amount }]
 
 export function init() {
   onChange((what) => {
@@ -28,6 +29,37 @@ export function init() {
   $("closeDay").addEventListener("change", () => { loadedDay = null; fillForm(); renderCount(); renderGap(); renderSummary(); });
   ["cFloat", "cCounted", "cBoothFee"].forEach((id) => $(id).addEventListener("input", renderSummary));
   $("staffHours").addEventListener("input", renderSummary);
+
+  // Other costs: typing updates the list, the × button removes a row
+  $("extrasList").addEventListener("input", (e) => {
+    const i = Number(e.target.dataset.row);
+    if (Number.isNaN(i) || !extras[i]) return;
+    if (e.target.dataset.field === "what") extras[i].what = e.target.value;
+    else extras[i].amount = e.target.value;
+    renderSummary();
+  });
+  $("extrasList").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-remove]");
+    if (!b) return;
+    extras.splice(Number(b.dataset.remove), 1);
+    renderExtras(); renderSummary();
+  });
+  $("addExtraBtn").addEventListener("click", () => {
+    extras.push({ what: "", amount: "" });
+    renderExtras();
+    $("extrasList").querySelector(`[data-row="${extras.length - 1}"][data-field="what"]`)?.focus();
+  });
+}
+
+function renderExtras() {
+  $("extrasList").innerHTML = extras.length ? extras.map((x, i) => `
+    <div class="extra-row">
+      <input data-row="${i}" data-field="what" value="${esc(x.what)}" maxlength="60"
+             placeholder="e.g. Ice, 3 bags" aria-label="What was it (cost ${i + 1})">
+      <input data-row="${i}" data-field="amount" type="number" min="0" step="0.01" value="${esc(x.amount)}"
+             placeholder="RM" aria-label="Amount in RM (cost ${i + 1})">
+      <button class="btn ghost small" type="button" data-remove="${i}" aria-label="Remove cost ${i + 1}">✕</button>
+    </div>`).join("") : `<p class="muted">No other costs added.</p>`;
 }
 
 const selDay = () => $("closeDay").value || todayKey();
@@ -85,6 +117,8 @@ function fillForm() {
   $("cCounted").value = c?.countedCash ?? "";
   $("cBoothFee").value = c?.boothFee ?? boothFeeFor(day, state.settings);
   $("cNote").value = c?.note ?? "";
+  extras = (c?.extras || []).map((x) => ({ what: x.what, amount: x.amount }));
+  renderExtras();
   renderStaff(true);
   updateCloseState();
   $("countBox").hidden = day !== todayKey();   // the stock count only works for today
@@ -120,6 +154,9 @@ function formClosing() {
     staff: [...document.querySelectorAll("[data-staff]")]
       .map((i) => ({ name: i.dataset.staff, hours: Number(i.value) || 0 }))
       .filter((p) => p.hours > 0),
+    extras: extras
+      .map((x) => ({ what: String(x.what || "").trim() || "Other", amount: round2(Number(x.amount) || 0) }))
+      .filter((x) => x.amount > 0),
     note: $("cNote").value.trim(),
   };
 }
@@ -235,6 +272,7 @@ function renderSummary() {
           <tr><td>− Stock used</td><td class="num">${rm(p.stockUsed)}</td></tr>
           <tr><td>− Salary</td><td class="num">${rm(p.salary)}</td></tr>
           <tr><td>− Booth fee</td><td class="num">${rm(p.boothFee)}</td></tr>
+          <tr><td>− Other costs</td><td class="num">${rm(p.otherCosts)}</td></tr>
           <tr class="total"><td>Profit</td><td class="num">${rm(p.profit)}</td></tr>
         </table>
       </div>

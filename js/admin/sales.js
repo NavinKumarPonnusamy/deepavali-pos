@@ -51,6 +51,7 @@ function renderOverview() {
       <tr><td>− Stock used</td><td class="num">${rm(p.stockUsed)}</td></tr>
       <tr><td>− Salary ${closing ? "" : `<span class="muted">(after closing)</span>`}</td><td class="num">${rm(p.salary)}</td></tr>
       <tr><td>− Booth fee</td><td class="num">${rm(p.boothFee)}</td></tr>
+      <tr><td>− Other costs ${closing ? "" : `<span class="muted">(after closing)</span>`}</td><td class="num">${rm(p.otherCosts)}</td></tr>
       <tr class="total"><td>${closing ? "Profit" : "Profit so far (before salary)"}</td><td class="num">${rm(p.profit)}</td></tr>
     </table>`;
 
