@@ -1,0 +1,47 @@
+/* css/stock.css
+   Styles for stock: the bars on cashier cards, the recipe editor and the Stock page.
+   Kept in its own file so your own changes to style.css are never overwritten. */
+
+/* ---------- Cashier: stock bar on each menu card ---------- */
+.stock-bar { height: 8px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.stock-fill { display: block; height: 100%; border-radius: 999px; transition: width 0.4s ease; }
+.stock-fill.ok { background: var(--ok); }
+.stock-fill.warn { background: var(--accent); }
+.stock-fill.low { background: var(--danger); }
+.stock-text { font-size: 0.8rem; color: var(--muted); }
+.stock-text.low { color: var(--danger); font-weight: 600; }
+.menu-item.sold-out { opacity: 0.6; }
+.sold-tag { font-size: 0.75rem; font-weight: 700; color: #fff; background: var(--danger);
+            padding: 1px 8px; border-radius: 999px; vertical-align: middle; }
+@media (prefers-reduced-motion: reduce) { .stock-fill { transition: none; } }
+
+/* ---------- Admin menu: recipe line under each size ---------- */
+.recipe-row td { padding-bottom: 10px; }
+.recipe { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; font-size: 0.9rem; }
+.recipe-part { display: inline-flex; gap: 4px; align-items: center;
+               background: var(--bg); border-radius: 8px; padding: 4px 6px; }
+.recipe-part select { max-width: 160px; padding: 6px; }
+.sizes input.recipe-amt, .recipe-amt { width: 80px; min-width: 0; padding: 6px; }
+
+/* ---------- Stock page ---------- */
+.stock-page { max-width: 960px; margin: 0 auto; padding: 16px; }
+.stock-page #stockApp { display: grid; gap: 16px; }
+.sub { font-size: 0.95rem; margin: 18px 0 8px; }
+.topup-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+.topup-list li { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline;
+                 padding: 8px 10px; border-radius: 8px; border-left: 4px solid var(--accent); background: var(--bg); }
+.topup-list li.out { border-left-color: var(--danger); }
+.buy-form, .add-inv { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; align-items: end; }
+.buy-preview { grid-column: 1 / -1; margin: 0; }
+.add-inv { margin-top: 14px; }
+.count-toggle { display: flex; gap: 8px; margin: 10px 0; }
+.data-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+.data-table th { text-align: left; font-size: 0.8rem; font-weight: 500; color: var(--muted);
+                 padding: 6px 8px; border-bottom: 1px solid var(--line); }
+.data-table td { padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+.data-table td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.data-table input { width: 110px; padding: 6px; }
+.data-table .low-input { width: 90px; }
+.gap-bad td { color: var(--danger); }
+#saveCountBtn { margin-top: 12px; }
+.buy-form input, .buy-form select, .add-inv input, .add-inv select { width: 100%; min-width: 0; }

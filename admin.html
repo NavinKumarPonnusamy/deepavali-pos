@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin · Booth POS</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/stock.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+  <header class="topbar">
+    <strong>Booth POS · Admin</strong>
+    <span class="topbar-right">
+      <span id="who" class="muted"></span>
+      <a href="cashier.html" class="btn ghost small">Cashier</a>
+      <button id="logoutBtn" class="btn ghost small" type="button">Sign out</button>
+    </span>
+  </header>
+
+  <div id="login"></div>
+
+  <main id="app" class="admin" hidden>
+
+    <!-- Shown to signed-in people who are not admins -->
+    <section id="noAccess" class="panel" hidden>
+      <h2>No admin access</h2>
+      <p>This account can't open the admin dashboard. Ask Navin to add you as an admin.</p>
+      <p class="muted">Your user ID (Navin needs this): <code id="myUid"></code></p>
+    </section>
+
+    <div id="adminApp" hidden>
+      <nav class="tabs" role="tablist" aria-label="Admin sections">
+        <button class="tab" role="tab" type="button" data-tab="overview">Overview</button>
+        <button class="tab" role="tab" type="button" data-tab="sales">Sales</button>
+        <button class="tab" role="tab" type="button" data-tab="menu">Menu</button>
+        <button class="tab" role="tab" type="button" data-tab="stock">Stock</button>
+        <button class="tab" role="tab" type="button" data-tab="closing">Closing</button>
+      </nav>
+      <p id="dataError" class="error" role="status"></p>
+
+      <!-- ===================== OVERVIEW ===================== -->
+      <section id="tab-overview" class="tab-panel" role="tabpanel">
+        <div class="panel">
+          <h2>Today</h2>
+          <div id="ovStats" class="stats stats-4"></div>
+        </div>
+        <div class="two-col">
+          <div class="panel">
+            <h2>Money today</h2>
+            <div id="ovProfit"></div>
+          </div>
+          <div class="panel">
+            <h2>Needs topping up</h2>
+            <ul id="ovLow" class="topup-list"></ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== SALES ===================== -->
+      <section id="tab-sales" class="tab-panel" role="tabpanel" hidden>
+        <div class="panel">
+          <div class="panel-head">
+            <label class="field inline">Day <select id="salesDay"></select></label>
+            <span class="head-actions">
+              <button id="dlDay" class="btn" type="button">Download day report (Excel)</button>
+              <button id="dlWeek" class="btn" type="button">Download week (Excel)</button>
+            </span>
+          </div>
+          <p id="reportMsg" class="error" role="status"></p>
+          <div id="salesStats" class="stats stats-4"></div>
+        </div>
+        <div class="two-col">
+          <div class="panel">
+            <h2>Items sold</h2>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead><tr><th>Item</th><th>Qty</th><th>Booth sales</th><th>Murukku</th></tr></thead>
+                <tbody id="itemsBody"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="panel">
+            <h2>Sales by hour</h2>
+            <div id="hourly" class="hourly"></div>
+          </div>
+        </div>
+        <div class="panel">
+          <h2>The week</h2>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr><th>Day</th><th>Orders</th><th>Sales</th><th>Murukku</th><th>Cash</th><th>QR</th><th>Profit</th></tr></thead>
+              <tbody id="weekBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== MENU ===================== -->
+      <section id="tab-menu" class="tab-panel" role="tabpanel" hidden>
+        <div class="panel">
+          <h2>Booth settings</h2>
+          <label class="check">
+            <input type="checkbox" id="floorMode">
+            Floor manager on duty (the Collected button moves from the cashier to the floor screen)
+          </label>
+        </div>
+
+        <div id="conflict" class="panel note" hidden>
+          Someone else changed the menu while you were editing. Saving will replace their changes.
+          <button id="discardBtn2" class="btn small" type="button">Load their version</button>
+        </div>
+
+        <div class="admin-head">
+          <h2>Menu items</h2>
+          <button id="addItemBtn" class="btn" type="button">+ Add item</button>
+        </div>
+        <div id="items" class="item-list"></div>
+
+        <div class="save-bar">
+          <span id="saveState" class="muted">No changes</span>
+          <button id="discardBtn" class="btn ghost" type="button" disabled>Discard changes</button>
+          <button id="saveBtn" class="btn primary" type="button" disabled>Save menu</button>
+        </div>
+      </section>
+
+      <!-- ===================== STOCK ===================== -->
+      <section id="tab-stock" class="tab-panel" role="tabpanel" hidden>
+        <div class="two-col">
+          <div class="panel">
+            <h2>Needs topping up</h2>
+            <ul id="topup" class="topup-list"></ul>
+          </div>
+          <div class="panel">
+            <h2>Can still make</h2>
+            <ul id="canMake" class="topup-list can-make"></ul>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>How long stock lasts</h2>
+          <p class="muted">"Usual pace" averages earlier booth days. "Today's pace" uses sales since today's first order.</p>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr><th>Item</th><th>Left (est.)</th><th>Used today</th><th>Used per day</th><th>At usual pace</th><th>At today's pace</th></tr></thead>
+              <tbody id="lastsBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>Log a purchase</h2>
+          <form id="buyForm" class="buy-form">
+            <label class="field">Stock item <select id="pInv" required></select></label>
+            <label class="field">How many packs / bottles <input id="pPacks" type="number" min="1" step="1" value="1" required></label>
+            <label class="field">Size of one <span id="pUnitLabel"></span>
+              <input id="pSize" type="number" min="0.01" step="any" required placeholder="e.g. 1000"></label>
+            <label class="field">Total price paid (RM)
+              <input id="pPrice" type="number" min="0" step="0.01" required placeholder="e.g. 32.00"></label>
+            <p id="pPreview" class="muted buy-preview"></p>
+            <button class="btn primary" type="submit">Add to stock</button>
+            <p id="buyMsg" class="msg" role="status"></p>
+          </form>
+          <h3 class="sub">Purchases today</h3>
+          <ul id="purchaseList" class="order-list"></ul>
+        </div>
+
+        <div class="panel">
+          <h2>Opening count</h2>
+          <p class="muted">Count what's at the booth before opening. This resets the levels and fills the cashier bars.</p>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr><th>Stock item</th><th>System estimate</th><th>Counted</th></tr></thead>
+              <tbody id="openBody"></tbody>
+            </table>
+          </div>
+          <button id="saveOpenBtn" class="btn primary spaced" type="button">Save opening count</button>
+          <p id="openMsg" class="msg" role="status"></p>
+        </div>
+
+        <div class="panel">
+          <h2>Stock items</h2>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr><th>Item</th><th>Left (est.)</th><th>Warn below</th><th>Cost per unit</th><th>Value</th><th></th></tr></thead>
+              <tbody id="invBody"></tbody>
+            </table>
+          </div>
+          <form id="addInvForm" class="add-inv">
+            <label class="field">New stock item <input id="newName" required placeholder="e.g. Ribena" maxlength="40"></label>
+            <label class="field">Measured in
+              <select id="newUnit">
+                <option value="ml">ml (liquids)</option>
+                <option value="pcs">pcs (cups, lids, packs, limes)</option>
+                <option value="g">g (powders, sugar)</option>
+              </select>
+            </label>
+            <label class="field">Warn below <input id="newLow" type="number" min="0" step="any" placeholder="e.g. 300"></label>
+            <button class="btn" type="submit">+ Add stock item</button>
+          </form>
+          <p id="addMsg" class="msg" role="status"></p>
+        </div>
+      </section>
+
+      <!-- ===================== CLOSING ===================== -->
+      <section id="tab-closing" class="tab-panel" role="tabpanel" hidden>
+        <div class="panel">
+          <div class="panel-head">
+            <label class="field inline">Day <select id="closeDay"></select></label>
+            <span id="closeState" class="muted"></span>
+          </div>
+        </div>
+
+        <div class="panel" id="countBox">
+          <h2>1. Closing stock count</h2>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr><th>Stock item</th><th>System estimate</th><th>Counted</th></tr></thead>
+              <tbody id="closeCountBody"></tbody>
+            </table>
+          </div>
+          <button id="saveCloseCountBtn" class="btn primary spaced" type="button">Save closing count</button>
+          <p id="closeCountMsg" class="msg" role="status"></p>
+        </div>
+        <div class="panel" id="countPast" hidden>
+          <h2>1. Closing stock count</h2>
+          <p class="muted">Stock can only be counted for today. The saved count for this day (if any) is below.</p>
+        </div>
+        <div id="gapBox" class="panel-inner"></div>
+
+        <div class="panel">
+          <h2>2. Cash and hours</h2>
+          <div class="close-form">
+            <label class="field">Float at opening (RM) <input id="cFloat" type="number" min="0" step="0.1"></label>
+            <label class="field">Cash counted at closing (RM) <input id="cCounted" type="number" min="0" step="0.1"></label>
+            <label class="field">Booth fee today (RM) <input id="cBoothFee" type="number" min="0" step="1"></label>
+          </div>
+          <h3 class="sub">Hours worked</h3>
+          <div id="staffHours" class="close-form"></div>
+          <label class="field">Note (anything unusual today) <input id="cNote" maxlength="300"></label>
+        </div>
+
+        <div class="panel">
+          <h2>3. Check and save</h2>
+          <div id="closeSummary"></div>
+          <div class="close-actions">
+            <button id="saveCloseBtn" class="btn primary" type="button">Save closing</button>
+            <button id="dlClose" class="btn" type="button">Download day report (Excel)</button>
+          </div>
+          <p id="closeMsg" class="msg" role="status"></p>
+        </div>
+
+        <details class="panel">
+          <summary><b>Settings</b> <span class="muted">· salary, booth fee, staff names</span></summary>
+          <form id="settingsForm" class="close-form settings-form">
+            <label class="field">Hourly rate (RM) <input id="sRate" type="number" min="0" step="0.5"></label>
+            <label class="field">Sales share (%) <input id="sShare" type="number" min="0" max="100" step="0.5"></label>
+            <label class="field">Split the share
+              <select id="sSplit">
+                <option value="equal">Equally between staff</option>
+                <option value="hours">By hours worked</option>
+              </select>
+            </label>
+            <label class="field">Booth fee per normal day (RM) <input id="sBoothFee" type="number" min="0" step="1"></label>
+            <label class="field">Event day <input id="sEventDay" type="date"></label>
+            <label class="field">Booth fee on the event day (RM) <input id="sEventFee" type="number" min="0" step="1"></label>
+            <label class="field">Usual float (RM) <input id="sFloat" type="number" min="0" step="1"></label>
+            <label class="field wide">Staff names (one per line)
+              <textarea id="sStaff" rows="4"></textarea></label>
+            <button class="btn primary" type="submit">Save settings</button>
+            <p id="settingsMsg" class="msg" role="status"></p>
+          </form>
+        </details>
+      </section>
+    </div>
+  </main>
+
+  <!-- SheetJS: builds the Excel reports in the browser -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script type="module" src="js/admin/main.js"></script>
+</body>
+</html>
