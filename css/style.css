@@ -5,17 +5,21 @@
 [hidden] { display: none !important; }
 
 :root {
-  --bg: #f6f3fa;          /* page background */
-  --panel: #ffffff;       /* cards / panels */
-  --ink: #1e1633;         /* main text (deep indigo) */
-  --muted: #6b6380;       /* secondary text */
-  --line: #e2dcec;        /* borders */
-  --accent: #e08a00;      /* marigold: main buttons */
-  --accent-ink: #1e1633;  /* text on accent buttons */
-  --accent-soft: #fff1d6;
-  --magenta: #b0236e;     /* rangoli pink: highlights */
-  --ok: #1f8a55;
-  --danger: #b42318;
+  /* Cupcha: black and gold, same as the logo */
+  color-scheme: dark;     /* dark scrollbars, date pickers and dropdowns */
+  --bg: #0e0e0e;          /* page background (logo black) */
+  --panel: #181715;       /* cards / panels */
+  --field: #22201c;       /* inputs */
+  --ink: #f2e8d5;         /* main text (logo cream) */
+  --muted: #a99f8a;       /* secondary text */
+  --line: #34302a;        /* borders */
+  --accent: #c9a227;      /* logo gold: main buttons */
+  --accent-ink: #0e0e0e;  /* text on gold buttons */
+  --accent-soft: #2b2512; /* dark gold: menu buttons, notes */
+  --magenta: #e3c35a;     /* light gold: highlights and focus rings */
+  --ok: #c9a227;          /* full stock bar = gold */
+  --warn: #8c7020;        /* half-empty stock bar = dark gold */
+  --danger: #e5484d;      /* kept red on purpose: sold out, errors, cash short */
   --radius: 10px;
   --font: "Hind", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
@@ -36,9 +40,10 @@ h2 { font-size: 1.05rem; margin: 0 0 10px; text-transform: uppercase; letter-spa
 .topbar {
   display: flex; justify-content: space-between; align-items: center; gap: 12px;
   padding: 10px 16px;
-  background: var(--ink); color: #fff;
+  background: #000; color: var(--accent);
+  border-bottom: 1px solid var(--accent);
 }
-.topbar .muted { color: #c9c1dd; }
+.topbar .muted { color: var(--ink); }
 .topbar-right { display: flex; align-items: center; gap: 10px; }
 
 /* ---------- Buttons ---------- */
@@ -52,13 +57,15 @@ h2 { font-size: 1.05rem; margin: 0 0 10px; text-transform: uppercase; letter-spa
   cursor: pointer;
   text-decoration: none;   /* so <a class="btn"> links look like buttons */
 }
-.btn:hover { border-color: var(--muted); }
+.btn:hover { border-color: var(--accent); }
+input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
 .btn:focus-visible { outline: 3px solid var(--magenta); outline-offset: 2px; }
 .btn:disabled { opacity: 0.45; cursor: not-allowed; }
 .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
-.btn.danger { background: var(--danger); border-color: var(--danger); color: #fff; }
+.btn.danger { background: var(--danger); border-color: var(--danger); color: #0e0e0e; font-weight: 600; }
 .btn.ghost { background: transparent; }
-.topbar .btn.ghost { color: #fff; border-color: #5a4f78; }
+.topbar .btn.ghost { color: var(--accent); border-color: var(--accent); }
+.topbar .btn.ghost:hover { background: var(--accent); color: var(--accent-ink); }
 .btn.small { padding: 6px 10px; font-size: 0.9rem; }
 .btn.big { width: 100%; padding: 16px; font-size: 1.15rem; margin-top: 12px; }
 
@@ -69,9 +76,9 @@ h2 { font-size: 1.05rem; margin: 0 0 10px; text-transform: uppercase; letter-spa
   display: grid; gap: 12px;
 }
 .login-card label, .field { display: grid; gap: 4px; font-size: 0.9rem; color: var(--muted); }
-input, select {
+input, select, textarea {
   font: inherit; color: var(--ink);
-  padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: #fff;
+  padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--field);
 }
 
 /* ---------- Cashier layout: menu | order | today ---------- */
@@ -107,9 +114,10 @@ input, select {
   border: 1px solid var(--line); border-radius: var(--radius);
   padding: 12px; display: grid; gap: 10px;
 }
-.menu-name { font-weight: 700; font-size: 1.1rem; }
+.menu-name { font-weight: 700; font-size: 1.1rem; color: var(--accent); }
 .size-row { display: flex; gap: 8px; }
-.btn.size { flex: 1; padding: 14px 8px; background: var(--accent-soft); border-color: transparent; }
+.btn.size { flex: 1; padding: 14px 8px; background: var(--accent-soft); border-color: var(--warn); color: var(--ink); }
+.btn.size:hover:not(:disabled) { background: var(--accent); color: var(--accent-ink); }
 .btn.size:active { transform: scale(0.97); }
 .tag { font-size: 0.75rem; font-weight: 500; color: var(--magenta); }
 
@@ -123,9 +131,9 @@ input, select {
   display: flex; justify-content: space-between; align-items: baseline;
   border-top: 1px solid var(--line); padding-top: 10px; font-size: 1.2rem;
 }
-.total-row strong { font-size: 1.6rem; font-variant-numeric: tabular-nums; }
+.total-row strong { color: var(--accent); font-size: 1.6rem; font-variant-numeric: tabular-nums; }
 .pay-toggle { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 12px 0; }
-.btn.pay.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+.btn.pay.active { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 600; }
 .pay-box { display: grid; gap: 8px; }
 .quick-cash { display: flex; gap: 6px; flex-wrap: wrap; }
 .note { background: var(--accent-soft); padding: 10px; border-radius: 8px; font-size: 0.9rem; }
