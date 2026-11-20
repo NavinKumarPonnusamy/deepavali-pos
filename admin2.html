@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <script>try{document.documentElement.dataset.theme=localStorage.getItem("cupcha-theme")||"light"}catch(e){}</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin · Cupcha</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="stylesheet" href="css/v2.css">
+</head>
+<body>
+  <header class="topbar">
+    <strong class="brand">Cupcha · Admin</strong>
+    <span class="topbar-right">
+      <button id="themeBtn" class="btn ghost small theme-btn" type="button">Dark mode</button>
+      <span id="who" class="muted"></span>
+      <a href="cashier2.html" class="btn ghost small">Cashier</a>
+      <button id="logoutBtn" class="btn ghost small" type="button">Sign out</button>
+    </span>
+  </header>
+
+  <div id="login"></div>
+
+  <main id="app" class="admin" hidden>
+    <section id="noAccess" class="panel" hidden>
+      <h2>No admin access</h2>
+      <p>This account can't open the admin dashboard. Ask Navin to add you as an admin.</p>
+      <p class="muted">Your user ID (Navin needs this): <code id="myUid"></code></p>
+    </section>
+
+    <div id="adminApp" hidden>
+      <nav class="tabs" role="tablist" aria-label="Admin sections">
+        <button class="tab" role="tab" type="button" data-tab="today">Day</button>
+        <button class="tab" role="tab" type="button" data-tab="menu">Menu</button>
+        <button class="tab" role="tab" type="button" data-tab="expenses">Expenses</button>
+        <button class="tab" role="tab" type="button" data-tab="summary">Closing &amp; profit</button>
+      </nav>
+      <p id="dataError" class="error" role="status"></p>
+
+      <!-- ===================== DAY ===================== -->
+      <section id="tab-today" class="tab-panel" role="tabpanel">
+        <div class="panel">
+          <div class="panel-head">
+            <label class="field inline">Day <select id="dayPick"></select></label>
+            <button id="dlDay" class="btn" type="button">Download day (Excel)</button>
+          </div>
+          <div id="dayStats" class="stats stats-4"></div>
+        </div>
+        <div class="two-col">
+          <div class="panel">
+            <h2>Items sold</h2>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead><tr><th>Item</th><th class="num">Qty</th><th class="num">Sales</th></tr></thead>
+                <tbody id="itemsBody"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="panel">
+            <h2>Sales by hour</h2>
+            <div id="hourly" class="hourly"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== MENU ===================== -->
+      <section id="tab-menu" class="tab-panel" role="tabpanel" hidden>
+        <div class="admin-head">
+          <h2>Menu</h2>
+          <button id="addItemBtn" class="btn" type="button">+ Add item</button>
+        </div>
+        <p class="muted">Label = small text under the name (e.g. 16oz, 6oz, 6 pcs). "Hand over now" items skip the To serve list.</p>
+        <div id="menuItems" class="item-list"></div>
+        <div class="save-bar">
+          <span id="saveState" class="muted">No changes</span>
+          <button id="discardBtn" class="btn ghost" type="button" disabled>Discard changes</button>
+          <button id="saveBtn" class="btn primary" type="button" disabled>Save menu</button>
+        </div>
+      </section>
+
+      <!-- ===================== EXPENSES ===================== -->
+      <section id="tab-expenses" class="tab-panel" role="tabpanel" hidden>
+        <div class="panel">
+          <h2>Add an expense</h2>
+          <form id="expForm" class="exp-form">
+            <label class="field">Date <input id="eDate" type="date" required></label>
+            <label class="field">What <input id="eWhat" required maxlength="80" placeholder="e.g. Sprite 12 × 1.5L"></label>
+            <label class="field">Amount (RM) <input id="eAmount" type="number" min="0" step="0.01" required></label>
+            <label class="field">Category <select id="eCat"></select></label>
+            <label class="field">Note <input id="eNote" maxlength="120" placeholder="optional"></label>
+            <button class="btn primary" type="submit">Add</button>
+          </form>
+          <p id="expMsg" class="msg" role="status"></p>
+        </div>
+        <div class="panel">
+          <div class="panel-head">
+            <h2>All expenses</h2>
+            <span class="muted">Total: <b id="expTotal">RM0.00</b></span>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr><th>Date</th><th>What</th><th>Category</th><th class="num">Amount</th><th></th></tr></thead>
+              <tbody id="expBody"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="panel">
+          <h2>By category</h2>
+          <div class="table-wrap">
+            <table class="data-table"><tbody id="expCatBody"></tbody></table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== CLOSING & PROFIT ===================== -->
+      <section id="tab-summary" class="tab-panel" role="tabpanel" hidden>
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Whole event</h2>
+            <button id="dlEvent" class="btn" type="button">Download event report (Excel)</button>
+          </div>
+          <div id="eventStats" class="stats stats-4"></div>
+          <div class="two-col spaced">
+            <div>
+              <h3 class="sub">Profit</h3>
+              <table class="data-table"><tbody id="profitBody"></tbody></table>
+            </div>
+            <div>
+              <h3 class="sub">Staff share</h3>
+              <p id="shareNote" class="muted"></p>
+              <table class="data-table"><tbody id="shareBody"></tbody></table>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>Day by day</h2>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr><th>Day</th><th class="num">Orders</th><th class="num">Sales</th><th class="num">Cash</th><th class="num">TNG</th><th class="num">Expenses</th><th>Closed</th></tr></thead>
+              <tbody id="daysBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Close a day</h2>
+            <label class="field inline">Day <select id="closeDay"></select></label>
+          </div>
+          <div class="close-form">
+            <label class="field">Float at opening (RM) <input id="cFloat" type="number" min="0" step="0.1"></label>
+            <label class="field">Cash counted at closing (RM) <input id="cCounted" type="number" min="0" step="0.1"></label>
+          </div>
+          <div id="cashCheck" class="note"></div>
+          <h3 class="sub">Hours worked <span class="muted">(salary is added to Expenses when you save)</span></h3>
+          <div id="staffRows" class="staff-rows"></div>
+          <button id="addStaffBtn" class="btn small" type="button">+ Add person</button>
+          <label class="field spaced">Note <input id="cNote" maxlength="300" placeholder="anything unusual today"></label>
+          <div class="close-actions">
+            <button id="saveCloseBtn" class="btn primary" type="button">Save closing</button>
+            <span id="closeState" class="muted"></span>
+          </div>
+          <p id="closeMsg" class="msg" role="status"></p>
+        </div>
+
+        <details class="panel">
+          <summary><b>Settings</b> <span class="muted">· pay rate, share, staff names, float</span></summary>
+          <form id="settingsForm" class="close-form settings-form">
+            <label class="field">Hourly rate (RM) <input id="sRate" type="number" min="0" step="0.5"></label>
+            <label class="field">Staff share (% of sales, whole event) <input id="sShare" type="number" min="0" max="100" step="0.5"></label>
+            <label class="field">Usual float (RM) <input id="sFloat" type="number" min="0" step="1"></label>
+            <label class="field wide">Staff names (one per line) <textarea id="sStaff" rows="4"></textarea></label>
+            <button class="btn primary" type="submit">Save settings</button>
+            <p id="settingsMsg" class="msg" role="status"></p>
+          </form>
+        </details>
+      </section>
+    </div>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script type="module" src="js/v2/admin/main.js"></script>
+  <script type="module" src="js/v2/theme.js"></script>
+</body>
+</html>
