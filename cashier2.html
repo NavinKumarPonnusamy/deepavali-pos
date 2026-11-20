@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <script>try{document.documentElement.dataset.theme=localStorage.getItem("cupcha-theme")||"light"}catch(e){}</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cashier · Cupcha</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/v2.css">
+</head>
+<body>
+  <header class="topbar">
+    <strong class="brand">Cupcha · Cashier</strong>
+    <span class="topbar-right">
+      <button id="themeBtn" class="btn ghost small theme-btn" type="button">Dark mode</button>
+      <span id="who" class="muted"></span>
+      <a href="kitchen.html" class="btn ghost small">Kitchen</a>
+      <a href="admin2.html" class="btn ghost small">Admin</a>
+      <button id="logoutBtn" class="btn ghost small" type="button">Sign out</button>
+    </span>
+  </header>
+
+  <div id="login"></div>
+
+  <main id="app" class="pos" hidden>
+
+    <!-- 1. MENU -->
+    <section class="panel pos-menu" aria-label="Menu">
+      <div id="catTabs" class="cat-tabs" role="tablist" aria-label="Categories"></div>
+      <div id="tiles" class="tiles"></div>
+    </section>
+
+    <!-- 2. ORDER -->
+    <section class="panel pos-order" aria-label="Current order">
+      <label class="field name-field">Customer name
+        <input id="custName" maxlength="20" autocomplete="off" placeholder="So you can call them">
+      </label>
+
+      <ul id="cartList" class="cart"></ul>
+
+      <div class="total-row">
+        <span>Total</span>
+        <strong id="cartTotal">RM0.00</strong>
+      </div>
+
+      <div class="pay-toggle" role="group" aria-label="Payment method">
+        <button class="btn pay active" data-pay="cash" type="button">Cash</button>
+        <button class="btn pay" data-pay="qr" type="button">TNG</button>
+        <button class="btn pay" data-pay="free" type="button">Free</button>
+      </div>
+
+      <div id="cashBox" class="pay-box">
+        <div class="quick-cash">
+          <button class="btn" data-cash="exact" type="button">Exact</button>
+          <button class="btn" data-cash="5" type="button">RM5</button>
+          <button class="btn" data-cash="10" type="button">RM10</button>
+          <button class="btn" data-cash="20" type="button">RM20</button>
+          <button class="btn" data-cash="50" type="button">RM50</button>
+        </div>
+        <label class="field">Cash received
+          <input id="received" type="number" inputmode="decimal" min="0" step="0.5">
+        </label>
+        <p class="change-line">Change: <strong id="change">–</strong></p>
+      </div>
+
+      <div id="qrBox" class="pay-box" hidden>
+        <img src="img/qr.png" alt="TNG DuitNow QR code" class="qr-img">
+        <p class="qr-amount">Amount: <strong id="qrAmount">RM0.00</strong></p>
+        <p class="muted">Check the payment arrived on <b>our</b> TNG before handing anything over.</p>
+      </div>
+
+      <div id="freeBox" class="pay-box" hidden>
+        <label class="field">Reason
+          <select id="freeReason">
+            <option>Staff drink</option>
+            <option>Committee allowance</option>
+            <option>Remake / spilt</option>
+            <option>Tasting</option>
+            <option>Other</option>
+          </select>
+        </label>
+      </div>
+
+      <button id="chargeBtn" class="btn primary big" type="button" disabled>Charge</button>
+      <button id="clearBtn" class="btn ghost clear-btn" type="button">Clear</button>
+      <p id="orderMsg" class="msg" role="status"></p>
+    </section>
+
+    <!-- 3. QUEUE -->
+    <section class="panel pos-queue" aria-label="Orders">
+      <h2>To serve <span id="queueCount" class="count"></span></h2>
+      <ul id="queueList" class="queue"></ul>
+
+      <details class="last-orders">
+        <summary>Last orders <span class="muted">(to void a mistake)</span></summary>
+        <ul id="recentList" class="order-list"></ul>
+      </details>
+    </section>
+
+  </main>
+
+  <!-- Pop-up used for: combo choices, pani puri pieces, changing a price -->
+  <dialog id="dlg" class="dlg" aria-labelledby="dlgTitle">
+    <form id="dlgForm" method="dialog">
+      <h2 id="dlgTitle"></h2>
+      <div id="dlgBody"></div>
+      <div class="dlg-actions">
+        <button class="btn ghost" type="button" id="dlgCancel">Cancel</button>
+        <button class="btn primary" type="submit" id="dlgOk">Add</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script type="module" src="js/v2/cashier.js"></script>
+  <script type="module" src="js/v2/theme.js"></script>
+</body>
+</html>

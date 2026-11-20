@@ -1,0 +1,182 @@
+/* css/style.css
+   Shared styles for every screen. Change the colours in :root to restyle everything. */
+
+/* Keep this first: makes the "hidden" attribute always win (see our earlier chat). */
+[hidden] { display: none !important; }
+
+:root {
+  /* Cupcha: black and gold, same as the logo */
+  color-scheme: dark;     /* dark scrollbars, date pickers and dropdowns */
+  --bg: #0e0e0e;          /* page background (logo black) */
+  --panel: #181715;       /* cards / panels */
+  --field: #22201c;       /* inputs */
+  --ink: #f2e8d5;         /* main text (logo cream) */
+  --muted: #a99f8a;       /* secondary text */
+  --line: #34302a;        /* borders */
+  --accent: #c9a227;      /* logo gold: main buttons */
+  --accent-ink: #0e0e0e;  /* text on gold buttons */
+  --accent-soft: #2b2512; /* dark gold: menu buttons, notes */
+  --magenta: #e3c35a;     /* light gold: highlights and focus rings */
+  /* Indicators stay colourful so they read at a glance */
+  --ok: #3fb950;          /* green: plenty of stock, saved messages */
+  --warn: #f0a020;        /* amber: getting low */
+  --danger: #e5484d;      /* red: sold out, errors, cash short */
+  --gold-dim: #8c7020;    /* dark gold: menu button borders */
+  --radius: 10px;
+  --font: "Hind", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: var(--font);
+  font-size: 16px;
+  background: var(--bg);
+  color: var(--ink);
+}
+h2 { font-size: 1.05rem; margin: 0 0 10px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
+.muted { color: var(--muted); font-size: 0.9rem; }
+.error { color: var(--danger); }
+
+/* ---------- Top bar ---------- */
+.topbar {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  padding: 10px 16px;
+  background: #000; color: var(--accent);
+  border-bottom: 1px solid var(--accent);
+}
+.topbar .muted { color: var(--ink); }
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+
+/* ---------- Buttons ---------- */
+.btn {
+  font: inherit;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--ink);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  cursor: pointer;
+  text-decoration: none;   /* so <a class="btn"> links look like buttons */
+}
+.btn:hover { border-color: var(--accent); }
+input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.btn:focus-visible { outline: 3px solid var(--magenta); outline-offset: 2px; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
+.btn.danger { background: var(--danger); border-color: var(--danger); color: #0e0e0e; font-weight: 600; }
+.btn.ghost { background: transparent; }
+.topbar .btn.ghost { color: var(--accent); border-color: var(--accent); }
+.topbar .btn.ghost:hover { background: var(--accent); color: var(--accent-ink); }
+.btn.small { padding: 6px 10px; font-size: 0.9rem; }
+.btn.big { width: 100%; padding: 16px; font-size: 1.15rem; margin-top: 12px; }
+
+/* ---------- Login ---------- */
+.login-card {
+  max-width: 360px; margin: 60px auto; padding: 24px;
+  background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+  display: grid; gap: 12px;
+}
+.login-card label, .field { display: grid; gap: 4px; font-size: 0.9rem; color: var(--muted); }
+input, select, textarea {
+  font: inherit; color: var(--ink);
+  padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--field);
+}
+
+/* ---------- Cashier layout: menu | order | today ---------- */
+.cashier {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 16px;
+  padding: 16px;
+  align-items: start;
+}
+@media (max-width: 1000px) {
+  .cashier { grid-template-columns: 1fr 1fr; }
+  .side-panel { grid-column: 1 / -1; }
+}
+@media (max-width: 640px) {
+  .cashier { grid-template-columns: 1fr; }
+}
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px;
+  min-width: 0;
+}
+
+/* ---------- Menu ---------- */
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 12px;
+}
+.menu-item {
+  border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 12px; display: grid; gap: 10px;
+}
+.menu-name { font-weight: 700; font-size: 1.1rem; color: var(--accent); }
+.size-row { display: flex; gap: 8px; }
+.btn.size { flex: 1; padding: 14px 8px; background: var(--accent-soft); border-color: var(--gold-dim); color: var(--ink); }
+.btn.size:hover:not(:disabled) { background: var(--accent); color: var(--accent-ink); }
+.btn.size:active { transform: scale(0.97); }
+.tag { font-size: 0.75rem; font-weight: 500; color: var(--magenta); }
+
+/* ---------- Order ---------- */
+.order-no { color: var(--magenta); }
+.cart { list-style: none; padding: 0; margin: 12px 0; display: grid; gap: 8px; }
+.cart-line { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items: center; }
+.qty { display: flex; align-items: center; gap: 8px; }
+.cart-sum { min-width: 70px; text-align: right; font-variant-numeric: tabular-nums; }
+.total-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  border-top: 1px solid var(--line); padding-top: 10px; font-size: 1.2rem;
+}
+.total-row strong { color: var(--accent); font-size: 1.6rem; font-variant-numeric: tabular-nums; }
+.pay-toggle { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 12px 0; }
+.btn.pay.active { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 600; }
+.pay-box { display: grid; gap: 8px; }
+.quick-cash { display: flex; gap: 6px; flex-wrap: wrap; }
+.note { background: var(--accent-soft); padding: 10px; border-radius: 8px; font-size: 0.9rem; }
+.msg { min-height: 1.4em; color: var(--ok); font-weight: 600; }
+
+/* ---------- Today panel ---------- */
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 18px; }
+.stat { border: 1px solid var(--line); border-radius: 8px; padding: 8px; display: grid; }
+.stat span { font-size: 0.8rem; color: var(--muted); }
+.stat b { font-size: 1.1rem; font-variant-numeric: tabular-nums; }
+.order-list { list-style: none; padding: 0; margin: 0 0 18px; display: grid; gap: 8px; }
+.order-row { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; display: grid; gap: 4px; }
+.order-row > .btn, .order-row > div > .btn { justify-self: start; }
+.order-row.status-ready { border-color: var(--ok); }
+.order-row.is-void { opacity: 0.55; }
+.pill { font-size: 0.75rem; padding: 1px 8px; border-radius: 999px; background: var(--bg); color: var(--muted); }
+.pill.danger { color: var(--danger); }
+.void-form { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+
+/* ---------- Admin ---------- */
+.admin { max-width: 860px; margin: 0 auto; padding: 16px 16px 96px; display: grid; gap: 16px; }
+.admin #editor { display: grid; gap: 16px; }
+.admin-head { display: flex; justify-content: space-between; align-items: center; }
+.admin-head h2 { margin: 0; }
+.item-list { display: grid; gap: 12px; }
+.item-card { display: grid; gap: 12px; }
+.item-card.is-hidden { opacity: 0.6; border-style: dashed; }
+.item-head { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.item-name { flex: 1; min-width: 180px; font-size: 1.1rem; font-weight: 700; }
+.checks { display: flex; gap: 8px 20px; flex-wrap: wrap; }
+.check { display: flex; gap: 8px; align-items: center; font-size: 0.95rem; color: var(--ink); }
+.table-wrap { overflow-x: auto; }
+.sizes { border-collapse: collapse; width: 100%; }
+.sizes th { text-align: left; font-size: 0.8rem; font-weight: 500; color: var(--muted); padding: 0 6px 4px; }
+.sizes td { padding: 3px 6px 3px 0; }
+.sizes input { width: 100%; min-width: 70px; }
+.item-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.confirm { display: flex; gap: 6px; align-items: center; color: var(--danger); }
+.save-bar {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  display: flex; gap: 10px; justify-content: flex-end; align-items: center;
+  padding: 12px 16px; background: var(--panel); border-top: 1px solid var(--line);
+}
+.save-bar #saveState { margin-right: auto; }
